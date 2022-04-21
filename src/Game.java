@@ -51,10 +51,12 @@ public class Game extends JFrame implements ActionListener {
         for(JButton btn : buttons){
             panel.add(btn);
             btn.addActionListener(this);
+            btn.setFont(new Font("Calibri", Font.PLAIN, 28));
         }
 
         turn = "X";
         board = new String[9];
+
     }
 
     @Override
@@ -74,32 +76,47 @@ public class Game extends JFrame implements ActionListener {
         check();
         if(counter % 2 == 0){
             turn = "O";
-            temp.setBackground(Color.decode("#0057B7"));
-            temp.setForeground(Color.decode("#FFFFFF"));
+            temp.setBackground(Color.decode("#0057b7"));
         }
         else{
             turn = "X";
             temp.setBackground(Color.decode("#ffd700"));
-            temp.setForeground(Color.decode("#FFFFFF"));
         }
+        temp.setForeground(Color.WHITE);
         counter++;
 
     }
 
     private void check() {
         for (int i = 0; i < 8; i++) {
-            String match = switch (i) {
-                case 0 -> board[0] + board[1] + board[2];
-                case 1 -> board[3] + board[4] + board[5];
-                case 2 -> board[6] + board[7] + board[8];
-                case 3 -> board[0] + board[3] + board[6];
-                case 4 -> board[1] + board[4] + board[7];
-                case 5 -> board[2] + board[5] + board[8];
-                case 6 -> board[0] + board[4] + board[8];
-                case 7 -> board[2] + board[4] + board[6];
-                default -> null;
-            };
+            String match = null;
 
+            switch (i) {
+                case 0:
+                    match = board[0] + board[1] + board[2];
+                    break;
+                case 1:
+                    match = board[3] + board[4] + board[5];
+                    break;
+                case 2:
+                    match = board[6] + board[7] + board[8];
+                    break;
+                case 3:
+                    match = board[0] + board[3] + board[6];
+                    break;
+                case 4:
+                    match = board[1] + board[4] + board[7];
+                    break;
+                case 5:
+                    match = board[2] + board[5] + board[8];
+                    break;
+                case 6:
+                    match = board[0] + board[4] + board[8];
+                    break;
+                case 7:
+                    match = board[2] + board[4] + board[6];
+                    break;
+            }
             if (match.equals("XXX")) {
                 won = true;
                 wonOrDraw();
@@ -119,13 +136,27 @@ public class Game extends JFrame implements ActionListener {
 
     }
 
+    private void enableButtons(){
+        for(JButton b: buttons){
+            b.setEnabled(true);
+        }
+    }
+
+    private void disableButtons(){
+        for(JButton b: buttons){
+            b.setEnabled(false);
+        }
+    }
+
     private void wonOrDraw() {
         if(won){
             newGame = new JDialog(this, "Game has been won by " + turn);
+
         }
         else{
             newGame = new JDialog(this, "DRAW");
         }
+        disableButtons();
 
         newGame.setLayout(new FlowLayout());
 
@@ -136,7 +167,7 @@ public class Game extends JFrame implements ActionListener {
         newGame.add(res);
         newGame.add(yes);
         newGame.add(no);
-        newGame.setSize(300, 300);
+        newGame.setSize(300, 100);
         newGame.setVisible(true);
 
         newGame.addWindowListener(new WindowAdapter() {
@@ -145,19 +176,9 @@ public class Game extends JFrame implements ActionListener {
             }
         });
 
-        yes.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                reset();
-            }
-        });
+        yes.addActionListener(e -> reset());
 
-        no.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        no.addActionListener(e -> System.exit(0));
     }
 
     private void reset(){
@@ -167,11 +188,10 @@ public class Game extends JFrame implements ActionListener {
 
         for(JButton btn : buttons){
             btn.setText(String.valueOf(++counter));
-            btn.setEnabled(true);
             btn.setBackground(null);
             btn.setForeground(null);
         }
-
+        enableButtons();
         board = new String[9];
         won = false;
         counter = 0;
